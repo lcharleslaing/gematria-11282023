@@ -32,6 +32,7 @@
   <main>
     <h1 class="text-3xl text-center my-4 font-extrabold">
       <AppName />
+      <p class="text-blue-700">{$user?.email}</p>
     </h1>
 
     {#if $user}

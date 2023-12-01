@@ -6,15 +6,10 @@ const user = writable(null);
 async function loadUserProfile() {
     const { data: { user: authUser }, error } = await supabase.auth.getUser();
 
-    if (error) {
-        console.error('Error fetching user profile:', error);
-        return;
-    }
-
     if (authUser) {
         const { data, error } = await supabase
             .from('user_profiles')
-            .select('id')
+            .select('*')  // Fetch all fields including the integer ID
             .eq('user_id', authUser.id)
             .single();
 

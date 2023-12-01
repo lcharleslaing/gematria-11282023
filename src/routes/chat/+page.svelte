@@ -10,8 +10,17 @@
   let userProfileId;
   let isTextAreaFocused = false;
 
+  // user.subscribe(($user) => {
+  //   userProfileId = $user?.id;
+  // });
+
   user.subscribe(($user) => {
-    userProfileId = $user?.id;
+    console.log("User data in subscription:", $user);
+    if ($user && $user.id) {
+      userProfileId = $user.id; // Assuming $user is the full profile with integer ID
+    } else {
+      console.error("User ID is undefined");
+    }
   });
 
   async function loadMessages() {
@@ -24,14 +33,16 @@
         text,
         created_at,
         parent_message_id,
-        user_profile: user_profiles!inner(clapper_id)
+        user_profile_id,
+        user_profile: user_profiles(clapper_id)
       `,
         )
         .order("created_at", { ascending: true });
 
       if (error) throw error;
 
-      console.log("Fetched messages:", data);
+      console.log("Fetched messages with user profiles:", data);
+      console.log("Fetched User profile:", data[0].user_profile);
       messages.set(data);
     } catch (error) {
       console.error("Error fetching messages:", error.message);
@@ -61,15 +72,24 @@
 
   async function addNewMessage() {
     if (!newMessageText.trim()) return;
-    const { data, error } = await supabase.from("messages").insert([
+    console.log(
+      "Attempting to add new message:",
+      newMessageText,
+      "User ID:",
+      userProfileId,
+    );
+
+    const response = await supabase.from("messages").insert([
       {
         user_profile_id: userProfileId,
         text: newMessageText,
       },
     ]);
 
-    if (error) {
-      console.error("Error posting message:", error);
+    console.log("Response from adding new message:", response);
+
+    if (response.error) {
+      console.error("Error posting new message:", response.error);
     } else {
       newMessageText = "";
       loadMessages();
@@ -79,7 +99,16 @@
   async function addReply(parentId) {
     const replyText = replyTexts[parentId];
     if (!replyText?.trim()) return;
-    const { data, error } = await supabase.from("messages").insert([
+    console.log(
+      "Attempting to add reply:",
+      replyText,
+      "to message ID:",
+      parentId,
+      "User ID:",
+      userProfileId,
+    );
+
+    const response = await supabase.from("messages").insert([
       {
         user_profile_id: userProfileId,
         text: replyText,
@@ -87,8 +116,10 @@
       },
     ]);
 
-    if (error) {
-      console.error("Error posting reply:", error);
+    console.log("Response from adding reply:", response);
+
+    if (response.error) {
+      console.error("Error posting reply:", response.error);
     } else {
       replyTexts[parentId] = "";
       loadMessages();
@@ -101,7 +132,11 @@
     if (error) {
       console.error("Error deleting message:", error);
     } else {
-      loadMessages();
+      messages.update((currentMessages) => {
+        return currentMessages.filter(
+          (msg) => msg.id !== id && msg.parent_message_id !== id,
+        );
+      });
     }
   }
 
@@ -113,30 +148,23 @@
 
 <div class="m-2">
   {#each organizedMessages as message}
-    <div
-      class="message mb-4 p-2 border-l-4 border-r-4 border-blue-500 bg-slate-50 shadow-md relative"
-    >
+    <div class="message ...">
       {#if message.user_profile_id === userProfileId}
         <button
-          class="absolute top-0 right-0 text-red-500 p-1"
-          on:click={() => deleteMessageOrComment(message.id)}>x</button
-        >
-      {/if}
-      {#if message.user_profile && message.user_profile.id === userProfileId}
-        <button
-          class="absolute top-0 right-0 text-red-500 p-1"
-          on:click={() => deleteMessageOrComment(message.id)}>x</button
+          class="delete-button btn btn-xs btn-error text-white"
+          on:click={() => deleteMessageOrComment(message.id)}>X</button
         >
       {/if}
       <p class="text-gray-800">
         <span class="text-blue-500 text-xs">
-          <strong
-            >@{message.user_profile
+          <strong>
+            @{message.user_profile
               ? message.user_profile.clapper_id
-              : "Unknown"}</strong
-          >: {new Date(message.created_at).toLocaleString()}
+              : "Unknown"}
+          </strong>: {new Date(message.created_at).toLocaleString()}
         </span>
       </p>
+
       <p class="whitespace-pre-wrap">{message.text}</p>
 
       {#each message.comments as comment}
@@ -145,13 +173,7 @@
         >
           {#if comment.user_profile_id === userProfileId}
             <button
-              class="absolute top-0 right-0 text-red-500 p-1"
-              on:click={() => deleteMessageOrComment(comment.id)}>x</button
-            >
-          {/if}
-          {#if comment.user_profile && comment.user_profile.id === userProfileId}
-            <button
-              class="absolute top-0 right-0 text-red-500 p-1"
+              class="absolute top-1 right-1 btn btn-xs btn-error text-white"
               on:click={() => deleteMessageOrComment(comment.id)}>x</button
             >
           {/if}
@@ -201,3 +223,16 @@
     </form>
   </div>
 </div>
+
+<style>
+  .message {
+    position: relative;
+    /* other styles for the message */
+  }
+  .delete-button {
+    position: absolute;
+    top: 5px; /* adjust as needed */
+    right: 5px; /* adjust as needed */
+    /* other styles for the button */
+  }
+</style>
