@@ -18,7 +18,15 @@
     try {
       const { data, error } = await supabase
         .from("messages")
-        .select("id, text, created_at, parent_message_id")
+        .select(
+          `
+        id,
+        text,
+        created_at,
+        parent_message_id,
+        user_profile: user_profiles!inner(clapper_id)
+      `,
+        )
         .order("created_at", { ascending: true });
 
       if (error) throw error;
