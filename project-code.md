@@ -166,6 +166,118 @@
 
 ```
 
+## File: lib\components\Nav.svelte
+
+```
+<script>
+  import { goto } from "$app/navigation";
+  const OTbooksOfBible = [
+    "Genesis",
+    "Exodus",
+    "Leviticus",
+    "Numbers",
+    "Deuteronomy",
+    "Joshua",
+    "Judges",
+    "Ruth",
+    "1 Samuel",
+    "2 Samuel",
+    "1 Kings",
+    "2 Kings",
+    "1 Chronicles",
+    "2 Chronicles",
+    "Ezra",
+    "Nehemiah",
+    "Esther",
+    "Job",
+    "Psalms",
+    "Proverbs",
+    "Ecclesiastes",
+    "Song of Solomon",
+    "Isaiah",
+    "Jeremiah",
+    "Lamentations",
+    "Ezekiel",
+    "Daniel",
+    "Hosea",
+    "Joel",
+    "Amos",
+    "Obadiah",
+    "Jonah",
+    "Micah",
+    "Nahum",
+    "Habakkuk",
+    "Zephaniah",
+    "Haggai",
+    "Zechariah",
+    "Malachi",
+  ];
+  const NTbooksOfBible = [
+    "Matthew",
+    "Mark",
+    "Luke",
+    "John",
+    "Acts",
+    "Romans",
+    "1 Corinthians",
+    "2 Corinthians",
+    "Galatians",
+    "Ephesians",
+    "Philippians",
+    "Colossians",
+    "1 Thessalonians",
+    "2 Thessalonians",
+    "1 Timothy",
+    "2 Timothy",
+    "Titus",
+    "Philemon",
+    "Hebrews",
+    "James",
+    "1 Peter",
+    "2 Peter",
+    "1 John",
+    "2 John",
+    "3 John",
+    "Jude",
+    "Revelation",
+  ];
+
+  function navigateToBook(book) {
+    goto(`/${book}`);
+  }
+</script>
+
+<h1 class="text-center text-2xl">Old Testament</h1>
+
+<div class="m-2">
+  <div class=" grid grid-cols-3 gap-1">
+    {#each OTbooksOfBible as book}
+      <a
+        href="/{book}"
+        class="p-2 border rounded"
+        on:click={() => navigateToBook(book)}
+      >
+        {book}
+      </a>
+    {/each}
+  </div>
+
+  <h1 class="text-center text-2xl">New Testament</h1>
+  <div class="grid grid-cols-3 gap-1">
+    {#each NTbooksOfBible as book}
+      <a
+        href="/{book}"
+        class="p-2 border rounded"
+        on:click={() => navigateToBook(book)}
+      >
+        {book}
+      </a>
+    {/each}
+  </div>
+</div>
+
+```
+
 ## File: lib\components\Navbar.svelte
 
 ```
@@ -424,9 +536,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabase";
   import { user } from "$lib/stores";
-  import AppName from "$lib/components/AppName.svelte";
-  let showPasswordRecovery = false;
-
+  import Nav from "$lib/components/Nav.svelte";
   onMount(() => {
     user.set(supabase.auth.getUser());
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -439,11 +549,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 <!-- Auth Forms -->
 <div class="">
-  <main>
-    <h1 class="text-3xl text-center my-4 font-extrabold">
-      <AppName />
-    </h1>
-  </main>
+  <Nav />
 </div>
 
 ```
@@ -574,6 +680,33 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 {:else}
   <p>Loading user data...</p>
 {/if}
+
+```
+
+## File: routes\Genesis\+page.server.js
+
+```
+import { supabase } from '$lib/supabase';
+export async function load() {
+
+    let { data: genesis, error } = await supabase
+        .from('kjvbible')
+        .select('*')
+        .eq('book', 'Genesis')
+
+    return {
+        genesis
+    };
+};
+```
+
+## File: routes\Genesis\+page.svelte
+
+```
+<script>
+  export let data;
+  const { genesis } = data;
+</script>
 
 ```
 

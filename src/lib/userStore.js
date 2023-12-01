@@ -1,12 +1,15 @@
-// src/lib/userStore.js
 import { writable } from 'svelte/store';
-import { supabase } from './supabase'; // Adjust import path as needed
+import { supabase } from './supabase'; // Adjust the import path as needed
 
 const user = writable(null);
 
-// Function to load user profile
 async function loadUserProfile() {
-    const authUser = supabase.auth.getUser();
+    const { data: { user: authUser }, error } = await supabase.auth.getUser();
+
+    if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+    }
 
     if (authUser) {
         const { data, error } = await supabase
@@ -23,7 +26,6 @@ async function loadUserProfile() {
     }
 }
 
-// Call this function when the user logs in
 loadUserProfile();
 
 export default user;

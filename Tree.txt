@@ -1,7 +1,10 @@
 ├── .env
 ├── example.env
+├── nodemon.json
 ├── package.json
 ├── postcss.config.cjs
+├── project-code.md
+├── project_code.js
 ├── README.md
 ├── src
 │   ├── app.html
@@ -12,6 +15,7 @@
 │   │   │   ├── Login.svelte
 │   │   │   ├── Logout.svelte
 │   │   │   ├── MenuLinks.svelte
+│   │   │   ├── Nav.svelte
 │   │   │   ├── Navbar.svelte
 │   │   │   ├── PasswordRecovery.svelte
 │   │   │   └── Register.svelte
@@ -20,12 +24,20 @@
 │   │   └── supabase.js
 │   └── routes
 │       ├── +layout.svelte
-│       └── +page.svelte
+│       ├── +page.svelte
+│       ├── auth
+│       │   ├── +page.svelte
+│       │   └── profile
+│       │       └── +page.svelte
+│       └── Genesis
+│           ├── +page.server.js
+│           └── +page.svelte
 ├── static
 │   └── favicon.png
 ├── svelte.config.js
 ├── tailwind.config.cjs
-└── vite.config.js
+├── vite.config.js
+└── vite.config.js.timestamp-1701214264760-27fb5dbdd1e78.mjs
 
 .env Variables:
 DATABASE_URL

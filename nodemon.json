@@ -6,5 +6,5 @@
     "ignore": [
         "src/project-code.md"
     ],
-    "exec": "node project_code.js && vite dev"
+    "exec": "node project_code.js && node Tree.js && vite dev"
 }
