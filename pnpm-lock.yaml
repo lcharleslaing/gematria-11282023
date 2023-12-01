@@ -6,6 +6,7 @@ specifiers:
   '@sveltejs/kit': ^1.27.4
   autoprefixer: ^10.4.14
   daisyui: ^4.4.2
+  date-fns: ^2.30.0
   nodemon: ^3.0.1
   postcss: ^8.4.24
   postcss-load-config: ^4.0.1
@@ -15,6 +16,7 @@ specifiers:
 
 dependencies:
   '@supabase/supabase-js': 2.38.5
+  date-fns: 2.30.0
 
 devDependencies:
   '@sveltejs/adapter-auto': 2.1.1_@sveltejs+kit@1.27.6
@@ -42,6 +44,13 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.20
     dev: true
+
+  /@babel/runtime/7.23.5:
+    resolution: {integrity: sha512-NdUTHcPe4C99WxPub+K9l9tK5/lV4UXIoaHSYgzco9BCyjKAAwzdBI+wWtYqHt7LJdbo74ZjRPJgzVweq1sz0w==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.0
+    dev: false
 
   /@esbuild/android-arm/0.18.20:
     resolution: {integrity: sha512-fyi7TDI/ijKKNZTUJAQqiG5T7YjJXgnzkURqmGj13C6dCqckZBLdl4h7bkhHt/t0WP+zO9/zwroDvANaOqO5Sw==}
@@ -642,6 +651,13 @@ packages:
       - postcss
     dev: true
 
+  /date-fns/2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.23.5
+    dev: false
+
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -1217,6 +1233,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regenerator-runtime/0.14.0:
+    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
+    dev: false
 
   /resolve/1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}

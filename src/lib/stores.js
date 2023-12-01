@@ -2,7 +2,7 @@
 import { writable } from 'svelte/store';
 import { supabase } from './supabase'; // Adjust import path as needed
 
-const user = writable(null);
+export const user = writable(null);
 
 // Function to load user profile
 async function loadUserProfile() {
@@ -26,4 +26,3 @@ async function loadUserProfile() {
 // Call this function when the user logs in
 loadUserProfile();
 
-export default user;

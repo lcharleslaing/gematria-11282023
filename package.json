@@ -21,6 +21,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.5"
+    "@supabase/supabase-js": "^2.38.5",
+    "date-fns": "^2.30.0"
   }
 }
