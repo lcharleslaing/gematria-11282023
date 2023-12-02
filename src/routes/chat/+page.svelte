@@ -227,20 +227,21 @@
         </div>
       </div>
     {/each}
-    <div class="sticky bottom-0 py-0.5 bg-slate-200">
-      <div class="mx-1 flex">
-        <form on:submit|preventDefault={sendMessage} class="flex w-full">
-          <textarea
-            bind:value={newMessageText}
-            placeholder="Type a message..."
-            rows="1"
-            class="textarea textarea-bordered flex-grow mr-0.5"
-          ></textarea>
-          <button type="submit" class="btn btn-primary text-white flex-none"
-            >Send</button
-          >
-        </form>
-      </div>
+  </div>
+
+  <div class="sticky bottom-0 py-0.5 bg-slate-200">
+    <div class="mx-1 flex">
+      <form on:submit|preventDefault={sendMessage} class="flex w-full">
+        <textarea
+          bind:value={newMessageText}
+          placeholder="Type a message..."
+          rows="1"
+          class="textarea textarea-bordered flex-grow mr-0.5"
+        ></textarea>
+        <button type="submit" class="btn btn-primary text-white flex-none"
+          >Send</button
+        >
+      </form>
     </div>
   </div>
 </div>
@@ -255,5 +256,10 @@
     top: 5px; /* adjust as needed */
     right: 5px; /* adjust as needed */
     /* other styles for the button */
+  }
+
+  .textarea {
+    font-size: 16px; /* or larger */
+    /* other styles */
   }
 </style>
