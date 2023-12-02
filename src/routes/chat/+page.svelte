@@ -144,9 +144,25 @@
     addNewMessage();
     isTextAreaFocused = false;
   }
+
+  function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const secondsAgo = Math.round((now - date) / 1000);
+
+    if (secondsAgo < 60) {
+      return `${secondsAgo} seconds ago`;
+    } else if (secondsAgo < 3600) {
+      return `${Math.round(secondsAgo / 60)} minutes ago`;
+    } else if (secondsAgo < 86400) {
+      return `${Math.round(secondsAgo / 3600)} hours ago`;
+    } else {
+      return `${Math.round(secondsAgo / 86400)} days ago`;
+    }
+  }
 </script>
 
-<div class="m-2">
+<div class="mx-4 my-8">
   {#each organizedMessages as message}
     <div class="message ...">
       {#if message.user_profile_id === userProfileId}
@@ -156,16 +172,22 @@
         >
       {/if}
       <p class="text-gray-800">
-        <span class="text-blue-500 text-xs">
-          <strong>
+        <span class="">
+          <strong
+            class="bg-blue-600 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
+          >
             @{message.user_profile
               ? message.user_profile.clapper_id
               : "Unknown"}
-          </strong>: {new Date(message.created_at).toLocaleString()}
+          </strong>:
+          <span
+            class="bg-slate-900 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
+            >{timeAgo(message.created_at)}</span
+          >
         </span>
       </p>
 
-      <p class="whitespace-pre-wrap">{message.text}</p>
+      <p class="whitespace-pre-wrap my-2">{message.text}</p>
 
       {#each message.comments as comment}
         <div
@@ -178,24 +200,24 @@
             >
           {/if}
           <p class="text-gray-900">
-            <span class="text-blue-700 text-xs">
+            <span class="text-blue-700">
               <strong
                 >@{comment.user_profile
                   ? comment.user_profile.clapper_id
                   : "Unknown"}</strong
-              >: {new Date(comment.created_at).toLocaleString()}
+              >: {timeAgo(comment.created_at)}
             </span>
           </p>
           <div class="whitespace-pre-wrap pb-2">{comment.text}</div>
         </div>
       {/each}
 
-      <div class="ml-0.5 reply-form mt-0.5 flex items-end">
+      <div class="ml-0.5 reply-form my-3 flex items-end">
         <textarea
           type="text"
           bind:value={replyTexts[message.id]}
           placeholder="Write a reply..."
-          class="mt-3 input input-bordered w-3/4 mr-0.5"
+          class=" input input-bordered w-3/4 mr-0.5"
         ></textarea>
         <button
           class="btn btn-primary text-white"
@@ -214,8 +236,6 @@
         placeholder="Type a message..."
         rows="2"
         class="textarea textarea-bordered flex-grow mr-0.5"
-        on:focus={() => (isTextAreaFocused = true)}
-        on:blur={() => (isTextAreaFocused = false)}
       ></textarea>
       <button type="submit" class="btn btn-primary text-white flex-none"
         >Send</button
