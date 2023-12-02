@@ -163,84 +163,86 @@
 </script>
 
 <div class="mx-4 my-8">
-  {#each organizedMessages as message}
-    <div class="message ...">
-      {#if message.user_profile_id === userProfileId}
-        <button
-          class="delete-button btn btn-xs btn-error text-white"
-          on:click={() => deleteMessageOrComment(message.id)}>X</button
-        >
-      {/if}
-      <p class="text-gray-800">
-        <span class="">
-          <strong
-            class="bg-blue-600 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
+  <div class="">
+    {#each organizedMessages as message}
+      <div class="message ...">
+        {#if message.user_profile_id === userProfileId}
+          <button
+            class="delete-button btn btn-xs btn-error text-white"
+            on:click={() => deleteMessageOrComment(message.id)}>X</button
           >
-            @{message.user_profile
-              ? message.user_profile.clapper_id
-              : "Unknown"}
-          </strong>:
-          <span
-            class="bg-slate-900 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
-            >{timeAgo(message.created_at)}</span
-          >
-        </span>
-      </p>
-
-      <p class="whitespace-pre-wrap my-2">{message.text}</p>
-
-      {#each message.comments as comment}
-        <div
-          class="ml-8 pl-4 border-l-4 border-r-4 border-blue-300 mt-2 bg-slate-100 shadow relative"
-        >
-          {#if comment.user_profile_id === userProfileId}
-            <button
-              class="absolute top-1 right-1 btn btn-xs btn-error text-white"
-              on:click={() => deleteMessageOrComment(comment.id)}>x</button
+        {/if}
+        <p class="text-gray-800">
+          <span class="">
+            <strong
+              class="bg-blue-600 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
             >
-          {/if}
-          <p class="text-gray-900">
-            <span class="text-blue-700">
-              <strong
-                >@{comment.user_profile
-                  ? comment.user_profile.clapper_id
-                  : "Unknown"}</strong
-              >: {timeAgo(comment.created_at)}
-            </span>
-          </p>
-          <div class="whitespace-pre-wrap pb-2">{comment.text}</div>
+              @{message.user_profile
+                ? message.user_profile.clapper_id
+                : "Unknown"}
+            </strong>:
+            <span
+              class="bg-slate-900 text-slate-100 px-1.5 pb-1 pt-0.5 rounded-full"
+              >{timeAgo(message.created_at)}</span
+            >
+          </span>
+        </p>
+
+        <p class="whitespace-pre-wrap my-2">{message.text}</p>
+
+        {#each message.comments as comment}
+          <div
+            class="ml-8 pl-4 border-l-4 border-r-4 border-blue-300 mt-2 bg-slate-100 shadow relative"
+          >
+            {#if comment.user_profile_id === userProfileId}
+              <button
+                class="absolute top-1 right-1 btn btn-xs btn-error text-white"
+                on:click={() => deleteMessageOrComment(comment.id)}>x</button
+              >
+            {/if}
+            <p class="text-gray-900">
+              <span class="text-blue-700">
+                <strong
+                  >@{comment.user_profile
+                    ? comment.user_profile.clapper_id
+                    : "Unknown"}</strong
+                >: {timeAgo(comment.created_at)}
+              </span>
+            </p>
+            <div class="whitespace-pre-wrap pb-2">{comment.text}</div>
+          </div>
+        {/each}
+
+        <div class="ml-0.5 reply-form my-3 flex items-end">
+          <textarea
+            type="text"
+            bind:value={replyTexts[message.id]}
+            placeholder="Write a reply..."
+            class=" input input-bordered w-3/4 mr-0.5"
+          ></textarea>
+          <button
+            class="btn btn-primary text-white"
+            on:click={() => addReply(message.id)}>Reply</button
+          >
         </div>
-      {/each}
-
-      <div class="ml-0.5 reply-form my-3 flex items-end">
-        <textarea
-          type="text"
-          bind:value={replyTexts[message.id]}
-          placeholder="Write a reply..."
-          class=" input input-bordered w-3/4 mr-0.5"
-        ></textarea>
-        <button
-          class="btn btn-primary text-white"
-          on:click={() => addReply(message.id)}>Reply</button
-        >
       </div>
-    </div>
-  {/each}
-</div>
+    {/each}
+  </div>
 
-<div class="sticky bottom-0 py-0.5 bg-slate-200">
-  <div class="mx-1 flex">
-    <form on:submit|preventDefault={sendMessage} class="flex w-full">
-      <textarea
-        bind:value={newMessageText}
-        placeholder="Type a message..."
-        rows="2"
-        class="textarea textarea-bordered flex-grow mr-0.5"
-      ></textarea>
-      <button type="submit" class="btn btn-primary text-white flex-none"
-        >Send</button
-      >
-    </form>
+  <div class="sticky bottom-0 py-0.5 bg-slate-200">
+    <div class="mx-1 flex">
+      <form on:submit|preventDefault={sendMessage} class="flex w-full">
+        <textarea
+          bind:value={newMessageText}
+          placeholder="Type a message..."
+          rows="1"
+          class="textarea textarea-bordered flex-grow mr-0.5"
+        ></textarea>
+        <button type="submit" class="btn btn-primary text-white flex-none"
+          >Send</button
+        >
+      </form>
+    </div>
   </div>
 </div>
 
