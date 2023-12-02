@@ -11,8 +11,8 @@
   let userProfileId;
   let isTextAreaFocused = false;
   let reloadInterval;
-  let latestMessageId; // ID of the latest message or comment
-  let unreadMessages = []; // Array of IDs of unread messages/comments
+  let latestMessageId;
+  let currentHighlighted = null;
 
   // user.subscribe(($user) => {
   //   userProfileId = $user?.id;
@@ -20,6 +20,16 @@
 
   // On component mount, set up the interval
   onMount(() => {
+    if (typeof window !== "undefined") {
+      const lastReadMessageId = localStorage.getItem("lastReadMessageId");
+      if (lastReadMessageId) {
+        const lastReadElement = document.getElementById(lastReadMessageId);
+        if (lastReadElement) {
+          lastReadElement.classList.add("highlighted");
+          lastReadElement.scrollIntoView();
+        }
+      }
+    }
     setupReloadInterval();
     const latestMessageElement = document.getElementById(latestMessageId);
     latestMessageElement?.scrollIntoView();
@@ -33,6 +43,8 @@
       console.error("User ID is undefined");
     }
   });
+
+  let unreadMessages = []; // Array to hold IDs of unread messages
 
   async function loadMessages() {
     try {
@@ -53,8 +65,17 @@
       if (error) throw error;
 
       console.log("Fetched messages with user profiles:", data);
-      console.log("Fetched User profile:", data[0].user_profile);
+
+      // Update messages store
       messages.set(data);
+
+      // Determine and store IDs of unread messages
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      unreadMessages = data
+        .filter((message) => new Date(message.created_at) > twentyFourHoursAgo)
+        .map((message) => `message-${message.id}`); // Adjust ID based on your HTML structure
+
+      console.log("Unread messages IDs:", unreadMessages);
     } catch (error) {
       console.error("Error fetching messages:", error.message);
     }
@@ -212,17 +233,31 @@
   }
 
   function goToNextUnread() {
-    console.log("Unread messages array:", unreadMessages);
-
     if (unreadMessages.length > 0) {
       const nextUnreadId = unreadMessages.shift();
-      console.log("Next unread ID:", nextUnreadId);
-
       const nextUnreadElement = document.getElementById(nextUnreadId);
-      console.log("Next unread element:", nextUnreadElement);
 
-      nextUnreadElement?.scrollIntoView({ behavior: "smooth" });
+      // Remove highlight from the current element
+      if (currentHighlighted) {
+        currentHighlighted.classList.remove("highlighted");
+      }
+
+      // Add highlight to the next unread element
+      if (nextUnreadElement) {
+        nextUnreadElement.classList.add("highlighted");
+        nextUnreadElement.scrollIntoView({ behavior: "smooth" });
+
+        // Update the current highlighted element
+        currentHighlighted = nextUnreadElement;
+      }
     }
+  }
+
+  function markAsRead(messageId) {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lastReadMessageId", messageId);
+    }
+    // Additional logic to mark the message as read
   }
 </script>
 
@@ -351,5 +386,11 @@
     top: 67px;
     right: 5px;
     /* other styling */
+  }
+
+  .highlighted {
+    background-color: #f0f0f0; /* Light grey background, adjust as needed */
+    border: 1px solid #ccc; /* Optional border, customize as desired */
+    /* Add any additional styling as needed */
   }
 </style>
