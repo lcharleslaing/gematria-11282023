@@ -263,7 +263,7 @@
     </div>
   </div>
 </div>
-<div class="flex justify-center btn btn-xs">
+<div class="flex justify-center btn btn-sm btn-primary text-white">
   <button class="" on:click={toggleFullscreen}>
     {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
   </button>
