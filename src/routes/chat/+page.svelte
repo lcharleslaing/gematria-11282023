@@ -2,6 +2,7 @@
   import { writable } from "svelte/store";
   import { supabase } from "$lib/supabase";
   import user from "$lib/userStore";
+  import { onMount } from "svelte";
 
   const messages = writable([]);
   let organizedMessages = [];
@@ -9,10 +10,20 @@
   let replyTexts = {};
   let userProfileId;
   let isTextAreaFocused = false;
+  let reloadInterval;
+  let latestMessageId; // ID of the latest message or comment
+  let unreadMessages = []; // Array of IDs of unread messages/comments
 
   // user.subscribe(($user) => {
   //   userProfileId = $user?.id;
   // });
+
+  // On component mount, set up the interval
+  onMount(() => {
+    setupReloadInterval();
+    const latestMessageElement = document.getElementById(latestMessageId);
+    latestMessageElement?.scrollIntoView();
+  });
 
   user.subscribe(($user) => {
     console.log("User data in subscription:", $user);
@@ -178,12 +189,55 @@
       }
     }
   }
+
+  // Function to set up the reload interval
+  function setupReloadInterval() {
+    reloadInterval = setInterval(() => {
+      if (!isTextAreaFocused) {
+        window.location.reload();
+      }
+    }, 60000); // 60 seconds
+  }
+
+  // Clear interval when focused on textarea
+  function handleFocus() {
+    clearInterval(reloadInterval);
+    isTextAreaFocused = true;
+  }
+
+  // Re-establish interval when textarea loses focus
+  function handleBlur() {
+    isTextAreaFocused = false;
+    setupReloadInterval();
+  }
+
+  function goToNextUnread() {
+    console.log("Unread messages array:", unreadMessages);
+
+    if (unreadMessages.length > 0) {
+      const nextUnreadId = unreadMessages.shift();
+      console.log("Next unread ID:", nextUnreadId);
+
+      const nextUnreadElement = document.getElementById(nextUnreadId);
+      console.log("Next unread element:", nextUnreadElement);
+
+      nextUnreadElement?.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 </script>
 
+<!-- Floating Button -->
+
 <div class="mx-4 my-8">
+  <button
+    class="floating-button btn btn-sm btn-accent"
+    on:click={goToNextUnread}
+  >
+    Next Unread
+  </button>
   <div class="">
     {#each organizedMessages as message}
-      <div class="message ...">
+      <div id={`message-${message.id}`} class="message ...">
         {#if message.user_profile_id === userProfileId}
           <button
             class="delete-button btn btn-xs btn-error text-white"
@@ -210,6 +264,7 @@
 
         {#each message.comments as comment}
           <div
+            id={`comment-${comment.id}`}
             class="ml-8 pl-4 border-l-4 border-r-4 border-blue-300 mt-2 bg-slate-100 shadow relative"
           >
             {#if comment.user_profile_id === userProfileId}
@@ -233,6 +288,8 @@
 
         <div class="ml-0.5 reply-form my-3 flex items-end">
           <textarea
+            on:focus={handleFocus}
+            on:blur={handleBlur}
             type="text"
             bind:value={replyTexts[message.id]}
             placeholder="Write a reply..."
@@ -251,6 +308,8 @@
     <div class="mx-1 flex">
       <form on:submit|preventDefault={sendMessage} class="flex w-full">
         <textarea
+          on:focus={handleFocus}
+          on:blur={handleBlur}
           bind:value={newMessageText}
           placeholder="Type a message..."
           rows="1"
@@ -284,5 +343,13 @@
   .textarea {
     font-size: 16px; /* or larger */
     /* other styles */
+  }
+
+  .floating-button {
+    z-index: 100;
+    position: fixed;
+    top: 67px;
+    right: 5px;
+    /* other styling */
   }
 </style>
