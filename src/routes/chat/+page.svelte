@@ -151,13 +151,13 @@
     const secondsAgo = Math.round((now - date) / 1000);
 
     if (secondsAgo < 60) {
-      return `${secondsAgo} seconds ago`;
+      return `${secondsAgo}s ago`;
     } else if (secondsAgo < 3600) {
-      return `${Math.round(secondsAgo / 60)} minutes ago`;
+      return `${Math.round(secondsAgo / 60)}m ago`;
     } else if (secondsAgo < 86400) {
-      return `${Math.round(secondsAgo / 3600)} hours ago`;
+      return `${Math.round(secondsAgo / 3600)}h ago`;
     } else {
-      return `${Math.round(secondsAgo / 86400)} days ago`;
+      return `${Math.round(secondsAgo / 86400)}d ago`;
     }
   }
 </script>
