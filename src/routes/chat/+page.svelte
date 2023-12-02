@@ -160,6 +160,24 @@
       return `${Math.round(secondsAgo / 86400)}d ago`;
     }
   }
+
+  let isFullscreen = false;
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((e) => {
+        console.error(
+          `Error attempting to enable full-screen mode: ${e.message}`,
+        );
+      });
+      isFullscreen = true;
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        isFullscreen = false;
+      }
+    }
+  }
 </script>
 
 <div class="mx-4 my-8">
@@ -229,7 +247,7 @@
     {/each}
   </div>
 
-  <div class="sticky bottom-0 py-0.5 bg-slate-200">
+  <div class="sticky bottom-0 py-0.5">
     <div class="mx-1 flex">
       <form on:submit|preventDefault={sendMessage} class="flex w-full">
         <textarea
@@ -244,6 +262,11 @@
       </form>
     </div>
   </div>
+</div>
+<div class="flex justify-center btn btn-xs">
+  <button class="" on:click={toggleFullscreen}>
+    {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+  </button>
 </div>
 
 <style>
